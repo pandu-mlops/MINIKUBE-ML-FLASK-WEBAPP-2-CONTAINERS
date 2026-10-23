@@ -1,0 +1,26 @@
+# =============================================================
+# Kubernetes Service — Recruitment Rank App
+# =============================================================
+
+apiVersion: v1
+kind: Service
+
+# METADATA
+metadata:
+  name: placement
+
+spec:
+
+  # SERVICE TYPE
+  type: LoadBalancer
+
+  # SELECTOR
+  selector:
+    app: placement
+
+  # PORT MAPPING
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 9696

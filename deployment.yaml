@@ -1,0 +1,76 @@
+# =============================================================
+# Kubernetes Deployment — Recruitment Rank App (ML Model)
+# =============================================================
+
+apiVersion: apps/v1
+kind: Deployment
+
+# METADATA
+metadata:
+  name: placement
+
+
+spec:
+
+  # REPLICAS
+  replicas: 2
+
+  # REVISION HISTORY
+  revisionHistoryLimit: 3
+
+  # SELECTOR
+  selector:
+    matchLabels:
+      app: placement
+
+  # POD TEMPLATE
+  template:
+    metadata:
+      labels:
+        app: placement
+
+    spec:
+      containers:
+        - name: placement
+          image: pandumlops/placement:v1
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 9696
+              name: http
+
+          # RESOURCE REQUESTS & LIMITS
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "500m"
+            limits:
+              memory: "256Mi"
+              cpu: "1"
+
+          # READINESS PROBE
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9696
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+
+          # LIVENESS PROBE
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9696
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            failureThreshold: 3
+            successThreshold: 1
+
+  # UPDATE STRATEGY
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
